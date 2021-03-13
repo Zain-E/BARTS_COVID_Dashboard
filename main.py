@@ -17,15 +17,15 @@ from plotly.subplots import make_subplots
 
 #================================================= AWS S3 CONNECTION ===================================================
 
-access_key_ID = 'AKIAXSF52DIAIYVY3EOU'
-secret_access_key = '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'
+#access_key_ID =
+#secret_access_key =
 bucket_name = 'zainprojects'
 upload_file_key = 'COVID_Analysis/'
 
-client = boto3.client('s3',aws_access_key_id=access_key_ID, aws_secret_access_key=secret_access_key)
+#client = boto3.client('s3',aws_access_key_id=access_key_ID, aws_secret_access_key=secret_access_key)
 
 #Reads the file in the S3 repo as a DF for appending later on
-obj = client.get_object(Bucket=bucket_name, Key='COVID_Analysis/ethnic-groups-by-borough.csv')
+#obj = client.get_object(Bucket=bucket_name, Key='COVID_Analysis/ethnic-groups-by-borough.csv')
 #df_s3 = pd.read_csv(obj['Body'])
 
 #=============================================== DATA MANIPULATION =====================================================
