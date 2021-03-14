@@ -3,7 +3,7 @@
 
 import pandas as pd
 import plotly.express as px
-#import boto3
+import boto3
 import dash_core_components as dcc
 import dash_bootstrap_components as dbc
 import dash_html_components as html
@@ -12,40 +12,65 @@ import base64
 from dash.dependencies import Input,Output,State
 import plotly.graph_objs as go
 from plotly.subplots import make_subplots
-
+import io
 
 #================================================= AWS S3 CONNECTION ===================================================
 
-#access_key_ID =
-#secret_access_key =
+access_key_ID ='AKIAXSF52DIAIYVY3EOU'
+secret_access_key ='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'
 bucket_name = 'zainprojects'
-upload_file_key = 'COVID_Analysis/'
+upload_file_key = 'COVID_Analysis/Excel_Documents/'
 
-#client = boto3.client('s3',aws_access_key_id=access_key_ID, aws_secret_access_key=secret_access_key)
 
-#Reads the file in the S3 repo as a DF for appending later on
-#obj = client.get_object(Bucket=bucket_name, Key='COVID_Analysis/ethnic-groups-by-borough.csv')
-#df_s3 = pd.read_csv(obj['Body'])
+
+s3 = boto3.client('s3', aws_access_key_id=access_key_ID, aws_secret_access_key=secret_access_key)
+
+
+#Reads the files in the S3 repo so we can use as a df
+#Table 1
+obj = s3.get_object(Bucket=bucket_name, Key=f'{upload_file_key}Table1.xlsx')
+data = obj['Body'].read()
+table1 = pd.read_excel(io.BytesIO(data))
+
+#Table 2C
+obj = s3.get_object(Bucket=bucket_name, Key=f'{upload_file_key}Table2C.xlsx')
+data = obj['Body'].read()
+table2C = pd.read_excel(io.BytesIO(data))
+
+#Table 3
+obj = s3.get_object(Bucket=bucket_name, Key=f'{upload_file_key}Table3.xlsx')
+data = obj['Body'].read()
+table3 = pd.read_excel(io.BytesIO(data))
+
+#Deprivation
+obj = s3.get_object(Bucket=bucket_name, Key=f'{upload_file_key}Deprivation_Index.xlsx')
+data = obj['Body'].read()
+Deprivation_Index = pd.read_excel(io.BytesIO(data))
+
+#Ethnicity
+obj = s3.get_object(Bucket=bucket_name, Key=f'{upload_file_key}Ethnic_Proportion.xlsx')
+data = obj['Body'].read()
+Ethnicity = pd.read_excel(io.BytesIO(data))
+
+#Location
+obj = s3.get_object(Bucket=bucket_name, Key=f'{upload_file_key}Location.xlsx')
+data = obj['Body'].read()
+Location = pd.read_excel(io.BytesIO(data))
+
+#Table
+obj = s3.get_object(Bucket=bucket_name, Key=f'{upload_file_key}Table.xlsx')
+data = obj['Body'].read()
+Table = pd.read_excel(io.BytesIO(data))
 
 #=============================================== DATA MANIPULATION =====================================================
 
-table1 = pd.read_excel('Main Data Transformed v2.xlsx', sheet_name='Table 1')
-# #table2A = pd.read_excel('Main Data Transformed v2.xlsx', sheet_name='Table 2A')
-# #table2B = pd.read_excel('Main Data Transformed v2.xlsx', sheet_name='Table 2B')
-table2C = pd.read_excel('Main Data Transformed v2.xlsx', sheet_name='Table 2C')
-table3 = pd.read_excel('Main Data Transformed v2.xlsx', sheet_name='Table 3')
-# table5 = pd.read_excel('Main Data Transformed v2.xlsx', sheet_name='Table 5')
-Deprivation_index = pd.read_excel('Main Data Transformed v2.xlsx', sheet_name='Deprivation Score Index')
-Ethnicity = pd.read_excel('Main Data Transformed v2.xlsx', sheet_name='Ethnic Proportion')
-Location = pd.read_excel('Main Data Transformed v2.xlsx', sheet_name='Location')
-Table = pd.read_excel('Main Data Transformed v2.xlsx', sheet_name='Table')
-#
-# print(table1.shape)
-#
-# table1 = table1[table1['Underlying cause of death'] == 'Due to COVID-19']
-# table1all = table1[table1['Sex'] == 'People']
-#
-# print(table1all.shape)
+#table1 = pd.read_excel('Main Data Transformed v2.xlsx', sheet_name='Table 1')
+# table2C = pd.read_excel('Main Data Transformed v2.xlsx', sheet_name='Table 2C')
+# table3 = pd.read_excel('Main Data Transformed v2.xlsx', sheet_name='Table 3')
+# Deprivation_index = pd.read_excel('Main Data Transformed v2.xlsx', sheet_name='Deprivation Score Index')
+# Ethnicity = pd.read_excel('Main Data Transformed v2.xlsx', sheet_name='Ethnic Proportion')
+# Location = pd.read_excel('Main Data Transformed v2.xlsx', sheet_name='Location')
+# Table = pd.read_excel('Main Data Transformed v2.xlsx', sheet_name='Table')
 
 #First tab Filter
 region_list = table1['Area of usual residence name'].unique()
@@ -335,14 +360,6 @@ def render_content(region):
     dfa = dfa[dfa['Area of usual residence name'].isin(region)]
     dfag = dfa.groupby(['Month'], as_index=False)['Deaths'].sum()
 
-
-    # df_dash = df_merged.copy()
-    # df_dash = df_dash[df_dash['POD'].isin(POD)]
-    # df_dash = df_dash[df_dash['STP'].isin(STP)]
-    # df_dash = df_dash[df_dash['Inner or Outer'].isin(Checklist)]
-    # df_dash = df_dash[df_dash['Activity Type'].isin(Checklist_eRS)]
-    # # df_dash = df_dash[df_dash['Week Commencing Date']==oldest_date]
-
     fig = go.Figure()
 
     fig.add_trace(
@@ -352,7 +369,7 @@ def render_content(region):
     fig.add_trace(go.Scatter(x=dfag['Month'], y=dfag["Deaths"], name='Due to other causes',
                               line=dict(color='firebrick', width=4, dash='dot')))
 
-    fig.update_xaxes(showgrid=True, ticklabelmode="period", dtick="M1", tickformat="%b\n%Y", title='')
+    #fig.update_xaxes(showgrid=True, ticklabelmode="period", dtick="M1", tickformat="%b\n%Y", title='')
 
     fig.update_xaxes(
         rangeslider_visible=False,
@@ -476,7 +493,7 @@ def render_content(region):
     fig.add_trace(go.Scatter(x=dfag["Borough"], y=dfag["Deprivation Score"], name='Deprivation', mode='markers'), secondary_y=True)
 
     fig.update_layout({'plot_bgcolor': 'rgba(0, 0, 0, 0)'},bargap=0.1)
-    fig.update_xaxes(tickangle=45,showgrid=True, ticklabelmode="period", dtick="M1", tickformat="%b\n%Y", title='')
+    fig.update_xaxes(tickangle=45,showgrid=True, dtick="M1", tickformat="%b\n%Y", title='')
     # fig.update_traces(texttemplate='%{text:.2s}', textposition='outside')
     fig.update_layout(yaxis_title="Deaths")
     fig.update_traces(marker_color='rgb(214, 39, 40)',marker=dict(size=12,
@@ -508,7 +525,7 @@ def render_content(region):
 
     fig = px.bar(dfg, x="Deprivation decile", y="Deaths")
     fig.update_layout({'plot_bgcolor': 'rgba(0, 0, 0, 0)'},bargap=0.5)
-    fig.update_xaxes(tickangle=0,showgrid=True, ticklabelmode="period", dtick="M1", title='')
+    #fig.update_xaxes(tickangle=0,showgrid=True, ticklabelmode="period", dtick="M1", title='')
     # fig.update_traces(texttemplate='%{text:.2s}', textposition='outside')
     fig.update_layout(yaxis_title="Deaths")
     fig.update_traces(marker_color='rgb(214, 39, 40)')
@@ -526,7 +543,7 @@ def render_content(region):
 
 def render_content(region):
 
-    df = Deprivation_index.copy()
+    df = Deprivation_Index.copy()
     df = df.sort_values(by=['Index of Multiple Deprivation score'],ascending=True)
     df['Borough'] = df['Local Authority District'].map(short_hand)
 
@@ -560,12 +577,6 @@ def render_content(region):
         xanchor="left",
         x=0.01
     ))
-
-    # fig.update_layout({
-    #     'plot_bgcolor': 'rgba(0, 0, 0, 0)'
-    #     # 'paper_bgcolor': 'rgba(0, 0, 0, 0)',
-    # })
-
 
     return fig
 
