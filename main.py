@@ -17,8 +17,8 @@ import xlrd
 
 #================================================= AWS S3 CONNECTION ===================================================
 
-access_key_ID =
-secret_access_key =
+access_key_ID ='AKIAXSF52DIAIYVY3EOU'
+secret_access_key ='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'
 bucket_name = 'zainprojects'
 upload_file_key = 'COVID_Analysis/Excel_Documents/'
 
@@ -486,9 +486,6 @@ def render_content(region):
 
     fig = make_subplots(specs=[[{"secondary_y": True}]])
 
-    #fig = px.area(dfg, x="Area of usual residence name", y="Population", color="Underlying cause of death",
-    #              line_group="Deaths")
-
     fig.add_trace(go.Bar(x=dfg["Borough"], y=dfg["Rate"], name='Death Rate (Deaths per 100K)'), secondary_y=False)
 
     fig.add_trace(go.Scatter(x=dfag["Borough"], y=dfag["Deprivation Score"], name='Deprivation', mode='markers'), secondary_y=True)
@@ -547,12 +544,6 @@ def render_content(region):
     df['Borough'] = df['Local Authority District'].map(short_hand)
 
 
-    # fig = px.bar(df, x="Local Authority District", y="Index of Multiple Deprivation score")
-    # fig.update_layout(bargap=0.5)
-    # fig.update_xaxes(showgrid=True, ticklabelmode="period", dtick="M1", tickformat="%b\n%Y", title='')
-    # # fig.update_traces(texttemplate='%{text:.2s}', textposition='outside')
-    # fig.update_layout(yaxis_title="Deprivation score")
-
     fig = make_subplots(specs=[[{"secondary_y": True}]])
 
     fig.add_trace(go.Bar(name='Overall Deprivation', x=df["Borough"], y=df["Index of Multiple Deprivation score"]),secondary_y=False)
@@ -595,12 +586,6 @@ def render_content(region):
     #df1['Borough'] = df1['Area'].map(short_hand)
     df2 = df1.sort_values(by=['%','Ethnicity'],ascending=[False,True])
 
-
-    # fig = px.bar(df, x="Local Authority District", y="Index of Multiple Deprivation score")
-    # fig.update_layout(bargap=0.5)
-    # fig.update_xaxes(showgrid=True, ticklabelmode="period", dtick="M1", tickformat="%b\n%Y", title='')
-    # # fig.update_traces(texttemplate='%{text:.2s}', textposition='outside')
-    # fig.update_layout(yaxis_title="Deprivation score")
 
     fig = px.bar(df2, x="Area", y="%", color="Ethnicity")
     fig.update_xaxes(tickangle=45,title='')
