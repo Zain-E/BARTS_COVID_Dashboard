@@ -13,6 +13,7 @@ from dash.dependencies import Input,Output,State
 import plotly.graph_objs as go
 from plotly.subplots import make_subplots
 import io
+import xlrd
 
 #================================================= AWS S3 CONNECTION ===================================================
 
