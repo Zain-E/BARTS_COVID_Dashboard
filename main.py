@@ -17,8 +17,8 @@ import xlrd
 
 #================================================= AWS S3 CONNECTION ===================================================
 
-access_key_ID ='AKIAXSF52DIAIYVY3EOU'
-secret_access_key ='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'
+access_key_ID =
+secret_access_key =
 bucket_name = 'zainprojects'
 upload_file_key = 'COVID_Analysis/Excel_Documents/'
 
@@ -65,13 +65,6 @@ Table = pd.read_excel(io.BytesIO(data))
 
 #=============================================== DATA MANIPULATION =====================================================
 
-#table1 = pd.read_excel('Main Data Transformed v2.xlsx', sheet_name='Table 1')
-# table2C = pd.read_excel('Main Data Transformed v2.xlsx', sheet_name='Table 2C')
-# table3 = pd.read_excel('Main Data Transformed v2.xlsx', sheet_name='Table 3')
-# Deprivation_index = pd.read_excel('Main Data Transformed v2.xlsx', sheet_name='Deprivation Score Index')
-# Ethnicity = pd.read_excel('Main Data Transformed v2.xlsx', sheet_name='Ethnic Proportion')
-# Location = pd.read_excel('Main Data Transformed v2.xlsx', sheet_name='Location')
-# Table = pd.read_excel('Main Data Transformed v2.xlsx', sheet_name='Table')
 
 #First tab Filter
 region_list = table1['Area of usual residence name'].unique()
@@ -122,9 +115,14 @@ app = dash.Dash(__name__, eager_loading=True, external_stylesheets=[dbc.themes.L
 server = app.server
 image_filename = r'Barts_logo.png' # replace with your own image - must be png image type - use this website to convert :https://jpg2png.com/
 encoded_image = base64.b64encode(open(image_filename, 'rb').read())
+image_filename = r'GitHub.png' # replace with your own image - must be png image type - use this website to convert :https://jpg2png.com/
+encoded_image_Git = base64.b64encode(open(image_filename, 'rb').read())
+image_filename_ONS = r'ONS.png' # replace with your own image - must be png image type - use this website to convert :https://jpg2png.com/
+encoded_image_ONS = base64.b64encode(open(image_filename_ONS, 'rb').read())
+
 app.layout = html.Div([
                         dbc.Row([dbc.Col(html.H1('COVID-19 Activity Dashboard',className='dark'),style={'text-align': 'center','vertical-align':'middle'}),
-                                dbc.Col(html.Img(src='data:image/png;base64,{}'.format(encoded_image.decode()), width=100, height=60, style={'vertical-align':'middle'}), width=1),
+                                dbc.Col(html.A(href='https://www.bartshealth.nhs.uk/', children=html.Img(src='data:image/png;base64,{}'.format(encoded_image.decode()), width=100, height=60, style={'vertical-align':'middle'}),target="_blank"), width=1),
                                 ]),
 
                         html.Hr(),
@@ -249,7 +247,7 @@ app.layout = html.Div([
                                     html.Br(),
                                     html.Br(),
 
-                                    dbc.Row(dbc.Col(html.H2('Deprivation VS Deaths', style={'text-align': 'center'}))),
+                                    dbc.Row(dbc.Col(html.H2('Deprivation VS Death Rate', style={'text-align': 'center'}))),
 
                                     dbc.Row(dbc.Col(dcc.Graph(id='Graph 3', figure={}), width={'size': 10, 'offset': 1})),
 
@@ -334,6 +332,11 @@ app.layout = html.Div([
                                     html.Br(),
                                     html.Br(),
 
+                                    dbc.Row([
+                                             dbc.Col(html.A(href='https://github.com/Zain-E/BARTS_COVID_Dashboard', children=html.Img(src='data:image/png;base64,{}'.format(encoded_image_Git.decode()), width=60, height=60, style={'vertical-align':'middle'}),target="_blank"), width={'size': 1, 'offset': -1}),
+                                             dbc.Col(html.A(href='https://www.ons.gov.uk/peoplepopulationandcommunity/birthsdeathsandmarriages/deaths/datasets/deathsduetocovid19bylocalareaanddeprivation', children=html.Img(src='data:image/png;base64,{}'.format(encoded_image_ONS.decode()), width=60, height=60, style={'vertical-align':'middle'}),target="_blank"), width={'size': 1, 'offset': -2})
+                                        ]),
+
 
                                 ]),
                         ])
@@ -391,7 +394,7 @@ def render_content(region):
 
     card = df['Deaths'].sum()
     #card_b = card.map('{:,.0f}'.format)
-    card_c = f"{card} TOTAL DEATHS"
+    card_c = f"{card:,} TOTAL DEATHS"
 
 
     return fig, card_c
@@ -437,8 +440,6 @@ def render_content(region):
     df = df[df['Area of usual residence name'].isin(region)]
     dfg = df.groupby(['Area of usual residence name','Underlying cause of death'], as_index=False)['Deaths','Population'].sum()
 
-    #fig = px.area(dfg, x="Area of usual residence name", y="Population", color="Underlying cause of death",
-    #              line_group="Deaths")
 
     fig = make_subplots(specs=[[{"secondary_y": True}]])
 
@@ -477,9 +478,8 @@ def render_content(region):
     df = df[df['Geography type'] == 'London Borough']
     df = df[df['Underlying cause of death']=='Due to COVID-19']
     df['Borough'] = df['Area of usual residence name'].map(short_hand)
-    #df = df[df['Area of usual residence name'].isin(region)]
-    dfg = df.groupby(['Borough'], as_index=False)['Deaths'].sum()
-    dfg = dfg.sort_values(by=['Deaths'],ascending=False)
+    dfg = df.groupby(['Borough'], as_index=False)['Rate'].sum()
+    dfg = dfg.sort_values(by=['Rate'],ascending=False)
 
     dfag = df.groupby(['Borough'], as_index=False)['Deprivation Score'].mean()
 
@@ -489,14 +489,14 @@ def render_content(region):
     #fig = px.area(dfg, x="Area of usual residence name", y="Population", color="Underlying cause of death",
     #              line_group="Deaths")
 
-    fig.add_trace(go.Bar(x=dfg["Borough"], y=dfg["Deaths"], name='Deaths by Borough'), secondary_y=False)
+    fig.add_trace(go.Bar(x=dfg["Borough"], y=dfg["Rate"], name='Death Rate (Deaths per 100K)'), secondary_y=False)
 
     fig.add_trace(go.Scatter(x=dfag["Borough"], y=dfag["Deprivation Score"], name='Deprivation', mode='markers'), secondary_y=True)
 
     fig.update_layout({'plot_bgcolor': 'rgba(0, 0, 0, 0)'},bargap=0.1)
     fig.update_xaxes(tickangle=45,showgrid=True, dtick="M1", tickformat="%b\n%Y", title='')
     # fig.update_traces(texttemplate='%{text:.2s}', textposition='outside')
-    fig.update_layout(yaxis_title="Deaths")
+    fig.update_layout(yaxis_title="Death Rate")
     fig.update_traces(marker_color='rgb(214, 39, 40)',marker=dict(size=12,
                               line=dict(width=2,
                                         color='DarkSlateGrey')),
@@ -519,9 +519,7 @@ def render_content(region):
     df = table3.copy()
     df = df[df['Sex'] != 'People']
     df = df[df['Underlying cause of death']=='Due to COVID-19']
-    #df = df[df['Area of usual residence name'].isin(region)]
     dfg = df.groupby(['Deprivation decile'], as_index=False)['Deaths'].sum()
-    #dfg = dfg.sort_values(by=['Deprivation decile'],ascending=True)
 
 
     fig = px.bar(dfg, x="Deprivation decile", y="Deaths")
@@ -693,9 +691,7 @@ def render_content(region):
         df = df[df['Geography type'] == 'London Borough']
         df = df[df['Underlying cause of death'] == 'Due to COVID-19']
         dfg = df.groupby(['Area of usual residence name'], as_index=False)['Deaths'].sum()
-
         df_merged = dfg.merge(Location,on=['Area of usual residence name'],how='left')
-        #df_merged = df_merged.drop(['Area of usual residence name_x'],axis=1)
 
         # REMEMBER the as_index function turns the aggregate output from a Series into a Dataframe - important as some graphs/figures need Dfs
         dfmap_group = df_merged.groupby(['Area of usual residence name', 'Lat', 'Long'], as_index=False)['Deaths'].sum()
