@@ -357,7 +357,13 @@ app.layout = html.Div([
                                    html.Br(),
 
                                    dbc.Row(dbc.Col(html.H5(
-                                        '• Data can be used to justify which programmes need focussing for improved performance and clinical outcomes, with the added benefit of targeting specific demographics',
+                                        '• Inform strategy for the medium to long term for BARTS in a "post-COVID" world',
+                                        style={'text-align': 'left'}), width={'size': 10, 'offset': 1})),
+
+                                   html.Br(),
+
+                                   dbc.Row(dbc.Col(html.H5(
+                                        '• Data can be used to justify which programmes need focussing for improved performance and clinical outcomes',
                                         style={'text-align': 'left'}), width={'size': 10, 'offset': 1})),
 
                                    html.Br(),
