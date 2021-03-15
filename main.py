@@ -489,12 +489,13 @@ def render_content(region):
     df = df[df['Sex'] == 'People']
     df = df[df['Underlying cause of death']=='Due to COVID-19']
     df = df[df['Area of usual residence name'].isin(region)]
-    dfg = df.groupby(['Area of usual residence name','Underlying cause of death'], as_index=False)['Deaths','Population'].sum()
+    dfg = df.groupby(['Area of usual residence name','Underlying cause of death'], as_index=False)['Deaths'].sum()
+    dfp = df.groupby(['Area of usual residence name', 'Underlying cause of death'], as_index=False)['Population'].mean()
 
 
     fig = make_subplots(specs=[[{"secondary_y": True}]])
 
-    fig.add_trace(go.Scatter(x=dfg["Area of usual residence name"], y=dfg["Population"],name='Pop', fill='tozeroy',
+    fig.add_trace(go.Scatter(x=dfp["Area of usual residence name"], y=dfp["Population"],name='Pop', fill='tozeroy',
                              mode='none'  # override default markers+lines
                              ),secondary_y=False)
 
