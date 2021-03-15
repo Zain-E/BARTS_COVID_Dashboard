@@ -17,8 +17,8 @@ import xlrd
 
 #================================================= AWS S3 CONNECTION ===================================================
 
-access_key_ID ='AKIAXSF52DIAIYVY3EOU'
-secret_access_key ='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'
+access_key_ID =
+secret_access_key =
 bucket_name = 'zainprojects'
 upload_file_key = 'COVID_Analysis/Excel_Documents/'
 
