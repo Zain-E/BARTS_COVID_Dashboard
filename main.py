@@ -332,11 +332,56 @@ app.layout = html.Div([
                                     html.Br(),
                                     html.Br(),
 
-                                    dbc.Row([
-                                             dbc.Col(html.A(href='https://github.com/Zain-E/BARTS_COVID_Dashboard', children=html.Img(src='data:image/png;base64,{}'.format(encoded_image_Git.decode()), width=60, height=60, style={'vertical-align':'middle'}),target="_blank"), width={'size': 1, 'offset': -1}),
-                                             dbc.Col(html.A(href='https://www.ons.gov.uk/peoplepopulationandcommunity/birthsdeathsandmarriages/deaths/datasets/deathsduetocovid19bylocalareaanddeprivation', children=html.Img(src='data:image/png;base64,{}'.format(encoded_image_ONS.decode()), width=60, height=60, style={'vertical-align':'middle'}),target="_blank"), width={'size': 1, 'offset': -2})
-                                        ]),
+                                    # dbc.Row([
+                                    #          dbc.Col(html.A(href='https://github.com/Zain-E/BARTS_COVID_Dashboard', children=html.Img(src='data:image/png;base64,{}'.format(encoded_image_Git.decode()), width=60, height=60, style={'vertical-align':'middle'}),target="_blank"), width={'size': 1, 'offset': -1}),
+                                    #          dbc.Col(html.A(href='https://www.ons.gov.uk/peoplepopulationandcommunity/birthsdeathsandmarriages/deaths/datasets/deathsduetocovid19bylocalareaanddeprivation', children=html.Img(src='data:image/png;base64,{}'.format(encoded_image_ONS.decode()), width=60, height=60, style={'vertical-align':'middle'}),target="_blank"), width={'size': 1, 'offset': -2})
+                                    #     ]),
 
+
+                                ]),
+
+                               # TAB 4 - RECOMMENDATIONS
+                                dcc.Tab(label='Recommendations', value='rec-tab', children=[
+
+                                   html.Hr(),
+
+                                   dbc.Row(dbc.Col(html.H2('Recommendations', style={'text-align': 'center'}),
+                                                   width={'size': 10, 'offset': 1})),
+                                   html.Br(),
+                                   html.Br(),
+
+                                   dbc.Row(dbc.Col(html.H5(
+                                       '• Use our internal data to validate the ONS figures',
+                                       style={'text-align': 'left'}), width={'size': 10, 'offset': 1})),
+
+                                   html.Br(),
+
+                                   dbc.Row(dbc.Col(html.H5(
+                                        '• Data can be used to justify which programmes need focussing for improved performance and clinical outcomes, with the added benefit of targeting specific demographics',
+                                        style={'text-align': 'left'}), width={'size': 10, 'offset': 1})),
+
+                                   html.Br(),
+
+                                   dbc.Row(dbc.Col(html.H5(
+                                       '• Encourage the finance/contract teams to use this dashboard to form a business case for competitive bids',
+                                       style={'text-align': 'left'}), width={'size': 10, 'offset': 1})),
+
+                                   html.Br(),
+                                   html.Hr(),
+
+                                   dbc.Row([
+                                        dbc.Col(html.A(href='https://github.com/Zain-E/BARTS_COVID_Dashboard',
+                                                       children=html.Img(src='data:image/png;base64,{}'.format(
+                                                           encoded_image_Git.decode()), width=60, height=60,
+                                                                         style={'vertical-align': 'middle'}),
+                                                       target="_blank"), width={'size': 1, 'offset': -1}),
+                                        dbc.Col(html.A(
+                                            href='https://www.ons.gov.uk/peoplepopulationandcommunity/birthsdeathsandmarriages/deaths/datasets/deathsduetocovid19bylocalareaanddeprivation',
+                                            children=html.Img(
+                                                src='data:image/png;base64,{}'.format(encoded_image_ONS.decode()),
+                                                width=60, height=60, style={'vertical-align': 'middle'}),
+                                            target="_blank"), width={'size': 1, 'offset': -2})
+                                   ]),
 
                                 ]),
                         ])
